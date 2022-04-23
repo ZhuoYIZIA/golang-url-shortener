@@ -1,0 +1,43 @@
+version: "3.9"
+
+networks:
+  backend:
+    driver: bridge
+    name: golang-url-shortener_backend
+
+volumes:
+  postgres:
+    driver: local
+
+services:
+
+### golang ####################
+  golang:
+    image: golang:1.18.1-alpine
+    working_dir: /server
+    volumes:
+      - .:/server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    command: go mod download
+    entrypoint: go run main.go
+    # restart: always
+    networks:
+      - backend
+
+### postgres ####################
+  postgres:
+    image: postgres:14.2-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=default
+      - POSTGRES_USER=default
+      - POSTGRES_PASSWORD=secret
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    # restart: always
+    networks:
+      - backend
