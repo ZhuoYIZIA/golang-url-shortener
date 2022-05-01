@@ -21,9 +21,8 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
-    command: go mod download
     entrypoint: go run main.go
-    # restart: always
+    restart: always
     networks:
       - backend
 
@@ -31,13 +30,14 @@ services:
   postgres:
     image: postgres:14.2-alpine
     ports:
-      - "5432:5432"
+      - "15432:5432"
     environment:
-      - POSTGRES_DB=default
-      - POSTGRES_USER=default
-      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ./postgres:/var/lib/postgresql/data
-    # restart: always
+      - postgres:/var/lib/postgresql/data/pgdata
+    restart: always
     networks:
       - backend
