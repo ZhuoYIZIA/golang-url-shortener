@@ -8,9 +8,10 @@ networks:
 volumes:
   postgres:
     driver: local
+  redis:
+    driver: local
 
 services:
-
 ### golang ####################
   golang:
     image: golang:1.18.1-alpine
@@ -41,3 +42,14 @@ services:
     restart: always
     networks:
       - backend
+
+### redis ####################
+  redis:
+      image: redis:7.0.0-alpine
+      volumes:
+        - redis:/data
+      ports:
+        - "16379:6379"
+      restart: always
+      networks:
+        - backend
