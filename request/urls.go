@@ -4,15 +4,28 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type UrlRequest struct {
+var validate *validator.Validate
+
+type GetUrlRequest struct {
+	Id string `json:"id" validate:"required,alphanum"`
+}
+
+func (request GetUrlRequest) Validator() error {
+	validate = validator.New()
+	err := validate.Struct(request)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type CreateUrlRequest struct {
 	Url string `json:"url" validate:"required,url"`
 }
 
-var validate *validator.Validate
-
-func (url UrlRequest) Validator() error {
+func (request CreateUrlRequest) Validator() error {
 	validate = validator.New()
-	err := validate.Struct(url)
+	err := validate.Struct(request)
 	if err != nil {
 		return err
 	}

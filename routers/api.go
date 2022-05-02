@@ -18,7 +18,7 @@ func InitRoutes() *gin.Engine {
 	v1Router := router.Group("v1")
 	{
 		v1Router.POST("/", controllers.CreateUrl)
-		// v1Router.GET("/:id", controllers.GetUrl)
+		v1Router.GET("/:id", controllers.GetUrl)
 	}
 
 	return router

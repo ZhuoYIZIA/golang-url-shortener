@@ -2,26 +2,38 @@ package services
 
 import (
 	"github.com/ZhuoYIZIA/url-shortener/constants"
-	"github.com/ZhuoYIZIA/url-shortener/models"
 	"github.com/ZhuoYIZIA/url-shortener/repositories"
 	"github.com/teris-io/shortid"
 	"time"
 )
 
+func GetOriginalUrlFromShortId(shortId string) (*string, error) {
+	//check redis first
+
+	//if nil, check db
+	modelUrl := repositories.Url{Id: shortId}
+	originalUrl := modelUrl.GetOriginalUrlInDB()
+
+	return &originalUrl, nil
+}
+
 func ConvertToShortUrl(originalUrl string) (*string, error) {
 	currentTime := time.Now().In(constants.TimeZone)
 	shortId, err := shortIdGenerator()
 	if err != nil {
+		// TODO: error handler
 		return nil, err
 	}
 
 	// store
-	err = repositories.StoreUrl(models.Url{
+	modelUrl := repositories.Url{
 		Id:          *shortId,
 		OriginalUrl: originalUrl,
 		CreateAt:    currentTime,
-	})
+	}
+	err = modelUrl.StoreUrlInDB()
 	if err != nil {
+		// TODO: error handler
 		return nil, err
 	}
 
